@@ -31,8 +31,8 @@ enum MeshShardType: uint32 {
 }
 
 struct CoreCoord {
-  x: uint32;
-  y: uint32;
+  x: uint64;
+  y: uint64;
 }
 
 struct CoreRange {
@@ -193,22 +193,22 @@ table UnaryWithParam {
 
 table MatmulMultiCoreReuseProgramConfig {
   compute_with_storage_grid_size: CoreCoord;
-  in0_block_w: uint32;
-  out_subblock_h: uint32;
-  out_subblock_w: uint32;
-  per_core_m: uint32;
-  per_core_n: uint32;
+  in0_block_w: uint64;
+  out_subblock_h: uint64;
+  out_subblock_w: uint64;
+  per_core_m: uint64;
+  per_core_n: uint64;
 }
 
 table MatmulMultiCoreReuseMultiCastProgramConfig {
   compute_with_storage_grid_size: CoreCoord;
-  in0_block_w: uint32;
-  out_subblock_h: uint32;
-  out_subblock_w: uint32;
-  out_block_h: uint32;
-  out_block_w: uint32;
-  per_core_m: uint32;
-  per_core_n: uint32;
+  in0_block_w: uint64;
+  out_subblock_h: uint64;
+  out_subblock_w: uint64;
+  out_block_h: uint64;
+  out_block_w: uint64;
+  per_core_m: uint64;
+  per_core_n: uint64;
   transpose_mcast: bool;
   fused_activation: UnaryWithParam;
   fuse_batch: bool;
@@ -216,25 +216,25 @@ table MatmulMultiCoreReuseMultiCastProgramConfig {
 
 table MatmulMultiCoreReuseMultiCast1DProgramConfig {
   compute_with_storage_grid_size: CoreCoord;
-  in0_block_w: uint32;
-  out_subblock_h: uint32;
-  out_subblock_w: uint32;
-  out_block_h: uint32;
-  out_block_w: uint32;
-  per_core_m: uint32;
-  per_core_n: uint32;
+  in0_block_w: uint64;
+  out_subblock_h: uint64;
+  out_subblock_w: uint64;
+  out_block_h: uint64;
+  out_block_w: uint64;
+  per_core_m: uint64;
+  per_core_n: uint64;
   fuse_batch: bool;
   fused_activation: UnaryWithParam;
   mcast_in0: bool;
   gather_in0: bool;
   hop_cores: CoreRangeSet;
-  num_global_cb_receivers: uint32;
+  num_global_cb_receivers: uint64;
 }
 
 table MatmulMultiCoreReuseMultiCastDRAMShardedProgramConfig {
-  in0_block_w: uint32;
-  per_core_m: uint32;
-  per_core_n: uint32;
+  in0_block_w: uint64;
+  per_core_m: uint64;
+  per_core_n: uint64;
   fused_activation: UnaryWithParam;
 }
 
