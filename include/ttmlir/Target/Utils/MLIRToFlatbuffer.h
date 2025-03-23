@@ -431,15 +431,10 @@ inline double toFlatbuffer(FlatbufferObjectCache &, mlir::FloatAttr attr) {
   return attr.getValueAsDouble();
 }
 
-inline bool toFlatbuffer(FlatbufferObjectCache &, mlir::BoolAttr attr) {
-  return attr.getValue();
-}
-
 inline ::tt::target::ttnn::CoreCoord
 toFlatbuffer(FlatbufferObjectCache &cache, ttnn::CoreCoordAttr coreCoordAttr) {
-  return ::tt::target::ttnn::CoreCoord(
-      coreCoordAttr.getX().getValue().getZExtValue(),
-      coreCoordAttr.getY().getValue().getZExtValue());
+  return ::tt::target::ttnn::CoreCoord(coreCoordAttr.getX(),
+                                       coreCoordAttr.getY());
 }
 
 inline ::tt::target::ttnn::CoreRange
@@ -558,12 +553,9 @@ toFlatbuffer(FlatbufferObjectCache &cache,
   ::tt::target::ttnn::CoreCoord computeWithStorageGridSize =
       toFlatbuffer(cache, matmulConfigAttr.getComputeWithStorageGridSize());
   return ::tt::target::ttnn::CreateMatmulMultiCoreReuseProgramConfig(
-      *cache.fbb, &computeWithStorageGridSize,
-      matmulConfigAttr.getIn0BlockW().getValue().getZExtValue(),
-      matmulConfigAttr.getOutSubblockH().getValue().getZExtValue(),
-      matmulConfigAttr.getOutSubblockW().getValue().getZExtValue(),
-      matmulConfigAttr.getPerCoreM().getValue().getZExtValue(),
-      matmulConfigAttr.getPerCoreN().getValue().getZExtValue());
+      *cache.fbb, &computeWithStorageGridSize, matmulConfigAttr.getIn0BlockW(),
+      matmulConfigAttr.getOutSubblockH(), matmulConfigAttr.getOutSubblockW(),
+      matmulConfigAttr.getPerCoreM(), matmulConfigAttr.getPerCoreN());
 }
 
 inline ::flatbuffers::Offset<::tt::target::ttnn::UnaryWithParam>
@@ -581,13 +573,18 @@ toFlatbuffer(
     ttnn::MatmulMultiCoreReuseMultiCastProgramConfigAttr matmulConfigAttr) {
   ::tt::target::ttnn::CoreCoord computeWithStorageGridSize =
       toFlatbuffer(cache, matmulConfigAttr.getComputeWithStorageGridSize());
+  ::flatbuffers::Offset<::tt::target::ttnn::UnaryWithParam> fused_activation;
+  if (matmulConfigAttr.getFusedActivation()) {
+    fused_activation =
+        toFlatbuffer(cache, matmulConfigAttr.getFusedActivation());
+  }
   return ::tt::target::ttnn::CreateMatmulMultiCoreReuseMultiCastProgramConfig(
-      *cache.fbb, &computeWithStorageGridSize,
-      matmulConfigAttr.getIn0BlockW().getValue().getZExtValue(),
-      matmulConfigAttr.getOutSubblockH().getValue().getZExtValue(),
-      matmulConfigAttr.getOutSubblockW().getValue().getZExtValue(),
-      matmulConfigAttr.getPerCoreM().getValue().getZExtValue(),
-      matmulConfigAttr.getPerCoreN().getValue().getZExtValue());
+      *cache.fbb, &computeWithStorageGridSize, matmulConfigAttr.getIn0BlockW(),
+      matmulConfigAttr.getOutSubblockH(), matmulConfigAttr.getOutSubblockW(),
+      matmulConfigAttr.getOutBlockH(), matmulConfigAttr.getOutBlockW(),
+      matmulConfigAttr.getPerCoreM(), matmulConfigAttr.getPerCoreN(),
+      matmulConfigAttr.getTransposeMcast(), fused_activation,
+      matmulConfigAttr.getFuseBatch());
 }
 
 inline ::flatbuffers::Offset<
@@ -603,19 +600,14 @@ toFlatbuffer(
         toFlatbuffer(cache, matmulConfigAttr.getFusedActivation());
   }
   return ::tt::target::ttnn::CreateMatmulMultiCoreReuseMultiCast1DProgramConfig(
-      *cache.fbb, &computeWithStorageGridSize,
-      matmulConfigAttr.getIn0BlockW().getValue().getZExtValue(),
-      matmulConfigAttr.getOutSubblockH().getValue().getZExtValue(),
-      matmulConfigAttr.getOutSubblockW().getValue().getZExtValue(),
-      matmulConfigAttr.getOutBlockH().getValue().getZExtValue(),
-      matmulConfigAttr.getOutBlockW().getValue().getZExtValue(),
-      matmulConfigAttr.getPerCoreM().getValue().getZExtValue(),
-      matmulConfigAttr.getPerCoreN().getValue().getZExtValue(),
-      toFlatbuffer(cache, matmulConfigAttr.getFuseBatch()), fused_activation,
-      toFlatbuffer(cache, matmulConfigAttr.getMcastIn0()),
-      toFlatbuffer(cache, matmulConfigAttr.getGatherIn0()),
+      *cache.fbb, &computeWithStorageGridSize, matmulConfigAttr.getIn0BlockW(),
+      matmulConfigAttr.getOutSubblockH(), matmulConfigAttr.getOutSubblockW(),
+      matmulConfigAttr.getOutBlockH(), matmulConfigAttr.getOutBlockW(),
+      matmulConfigAttr.getPerCoreM(), matmulConfigAttr.getPerCoreN(),
+      matmulConfigAttr.getFuseBatch(), fused_activation,
+      matmulConfigAttr.getMcastIn0(), matmulConfigAttr.getGatherIn0(),
       toFlatbuffer(cache, matmulConfigAttr.getHopCores()),
-      matmulConfigAttr.getNumGlobalCbReceivers().getValue().getZExtValue());
+      matmulConfigAttr.getNumGlobalCbReceivers());
 }
 
 inline ::flatbuffers::Offset<
@@ -630,9 +622,8 @@ toFlatbuffer(FlatbufferObjectCache &cache,
   }
   return ::tt::target::ttnn::
       CreateMatmulMultiCoreReuseMultiCastDRAMShardedProgramConfig(
-          *cache.fbb, matmulConfigAttr.getIn0BlockW().getValue().getZExtValue(),
-          matmulConfigAttr.getPerCoreM().getValue().getZExtValue(),
-          matmulConfigAttr.getPerCoreN().getValue().getZExtValue(),
+          *cache.fbb, matmulConfigAttr.getIn0BlockW(),
+          matmulConfigAttr.getPerCoreM(), matmulConfigAttr.getPerCoreN(),
           fused_activation);
 }
 

@@ -29,10 +29,8 @@ def TTNN_CoreCoordAttr : TTNN_Attr<"CoreCoord", "core_coord"> {
     TTNN CoreCoord attribute
   }];
 
-  let parameters = (ins "IntegerAttr":$x, "IntegerAttr":$y);
+  let parameters = (ins "size_t":$x, "size_t":$y);
   let assemblyFormat = "`<` params `>`";
-
-  let genVerifyDecl = 1;
 }
 
 def TTNN_CoreRangeAttr: TTNN_Attr<"CoreRange", "core_range"> {
@@ -45,7 +43,7 @@ def TTNN_CoreRangeAttr: TTNN_Attr<"CoreRange", "core_range"> {
   let assemblyFormat = "`<` params `>`";
 }
 
-def TTNN_CoreRangeSet: TTNN_Attr<"CoreRangeSet", "core_range_set"> {
+def TTNN_CoreRangeSetAttr: TTNN_Attr<"CoreRangeSet", "core_range_set"> {
   let summary = "TTNN CoreRangeSet attribute";
   let description = [{
     TTNN CoreRangeSet attribute
@@ -128,15 +126,13 @@ def TTNN_MatmulMultiCoreReuseProgramConfigAttr : TTNN_Attr<"MatmulMultiCoreReuse
   }];
 
   let parameters = (ins "CoreCoordAttr":$compute_with_storage_grid_size,
-                        "IntegerAttr":$in0_block_w,
-                        "IntegerAttr":$out_subblock_h,
-                        "IntegerAttr":$out_subblock_w,
-                        "IntegerAttr":$per_core_m,
-                        "IntegerAttr":$per_core_n);
+                        "size_t":$in0_block_w,
+                        "size_t":$out_subblock_h,
+                        "size_t":$out_subblock_w,
+                        "size_t":$per_core_m,
+                        "size_t":$per_core_n);
 
   let assemblyFormat = "`<` struct(params) `>`";
-
-  let genVerifyDecl = 1;
 }
 
 def TTNN_MatmulMultiCoreReuseMultiCastProgramConfigAttr : TTNN_Attr<"MatmulMultiCoreReuseMultiCastProgramConfig", "matmul_multi_core_reuse_multi_cast_program_config"> {
@@ -146,20 +142,18 @@ def TTNN_MatmulMultiCoreReuseMultiCastProgramConfigAttr : TTNN_Attr<"MatmulMulti
   }];
 
   let parameters = (ins "CoreCoordAttr":$compute_with_storage_grid_size,
-                        "IntegerAttr":$in0_block_w,
-                        "IntegerAttr":$out_subblock_h,
-                        "IntegerAttr":$out_subblock_w,
-                        "IntegerAttr":$out_block_h,
-                        "IntegerAttr":$out_block_w,
-                        "IntegerAttr":$per_core_m,
-                        "IntegerAttr":$per_core_n,
-                        "BoolAttr":$transpose_mcast,
+                        "size_t":$in0_block_w,
+                        "size_t":$out_subblock_h,
+                        "size_t":$out_subblock_w,
+                        "size_t":$out_block_h,
+                        "size_t":$out_block_w,
+                        "size_t":$per_core_m,
+                        "size_t":$per_core_n,
+                        "bool":$transpose_mcast,
                         OptionalParameter<"UnaryWithParamAttr">:$fused_activation,
-                        "BoolAttr":$fuse_batch);
+                        "bool":$fuse_batch);
 
   let assemblyFormat = "`<` struct(params) `>`";
-
-  let genVerifyDecl = 1;
 }
 
 def TTNN_MatmulMultiCoreReuseMultiCast1DProgramConfigAttr : TTNN_Attr<"MatmulMultiCoreReuseMultiCast1DProgramConfig", "matmul_multi_core_reuse_multi_cast_1d_program_config"> {
@@ -169,23 +163,21 @@ def TTNN_MatmulMultiCoreReuseMultiCast1DProgramConfigAttr : TTNN_Attr<"MatmulMul
   }];
 
   let parameters = (ins "CoreCoordAttr":$compute_with_storage_grid_size,
-                        "IntegerAttr":$in0_block_w,
-                        "IntegerAttr":$out_subblock_h,
-                        "IntegerAttr":$out_subblock_w,
-                        "IntegerAttr":$out_block_h,
-                        "IntegerAttr":$out_block_w,
-                        "IntegerAttr":$per_core_m,
-                        "IntegerAttr":$per_core_n,
-                        "BoolAttr":$fuse_batch,
+                        "size_t":$in0_block_w,
+                        "size_t":$out_subblock_h,
+                        "size_t":$out_subblock_w,
+                        "size_t":$out_block_h,
+                        "size_t":$out_block_w,
+                        "size_t":$per_core_m,
+                        "size_t":$per_core_n,
+                        "bool":$fuse_batch,
                         OptionalParameter<"UnaryWithParamAttr">:$fused_activation,
-                        "BoolAttr":$mcast_in0,
-                        "BoolAttr":$gather_in0,
+                        "bool":$mcast_in0,
+                        "bool":$gather_in0,
                         "CoreRangeSetAttr":$hop_cores,
-                        "IntegerAttr":$num_global_cb_receivers);
+                        "size_t":$num_global_cb_receivers);
 
   let assemblyFormat = "`<` struct(params) `>`";
-
-  let genVerifyDecl = 1;
 }
 
 def TTNN_MatmulMultiCoreReuseMultiCastDRAMShardedProgramConfigAttr : TTNN_Attr<"MatmulMultiCoreReuseMultiCastDRAMShardedProgramConfig", "matmul_multi_core_reuse_multi_cast_dram_sharded_program_config"> {
@@ -194,14 +186,12 @@ def TTNN_MatmulMultiCoreReuseMultiCastDRAMShardedProgramConfigAttr : TTNN_Attr<"
     TTNN MatmulMultiCoreReuseMultiCastDRAMShardedProgramConfig
   }];
 
-  let parameters = (ins "IntegerAttr":$in0_block_w,
-                        "IntegerAttr":$per_core_m,
-                        "IntegerAttr":$per_core_n,
+  let parameters = (ins "size_t":$in0_block_w,
+                        "size_t":$per_core_m,
+                        "size_t":$per_core_n,
                         OptionalParameter<"UnaryWithParamAttr">:$fused_activation);
 
   let assemblyFormat = "`<` struct(params) `>`";
-
-  let genVerifyDecl = 1;
 }
 
 def TTNN_Conv2dConfigAttr : TTNN_Attr<"Conv2dConfig", "conv2d_config"> {
