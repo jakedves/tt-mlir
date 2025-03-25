@@ -8,12 +8,12 @@
 #ttnn_layout2 = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<2x3x!tt.tile<32x32, bf16>, #dram>, <interleaved>>
 
 #matmul_program_config = #ttnn.matmul_multi_core_reuse_program_config<
-  compute_with_storage_grid_size = #ttnn.core_coord<0 : i32, 0 : i32>,
-  in0_block_w = 0: i32,
-  out_subblock_h = 0 : i32,
-  out_subblock_w = 0 : i32,
-  per_core_m = 0 : i32,
-  per_core_n = 0 : i32
+  compute_with_storage_grid_size = #ttnn.core_coord<0, 0>,
+  in0_block_w = 0,
+  out_subblock_h = 0,
+  out_subblock_w = 0,
+  per_core_m = 0,
+  per_core_n = 0
 >
 
 module attributes {} {

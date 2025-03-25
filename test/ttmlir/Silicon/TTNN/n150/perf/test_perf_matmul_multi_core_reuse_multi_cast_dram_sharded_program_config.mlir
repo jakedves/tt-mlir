@@ -8,10 +8,10 @@
 #ttnn_layout2 = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<2x3x!tt.tile<32x32, bf16>, #dram>, <interleaved>>
 
 #matmul_program_config = #ttnn.matmul_multi_core_reuse_multi_cast_dram_sharded_program_config<
-  in0_block_w = 0 : i32,
-  per_core_m = 0 : i32,
-  per_core_n = 0 : i32,
-  fused_activation = #ttnn.unary_with_param<op_type = add_unary_sfpu, params = 0 : f32, 0 : f32>
+  in0_block_w = 0,
+  per_core_m = 0,
+  per_core_n = 0,
+  fused_activation = #ttnn.unary_with_param<op_type = add_unary_sfpu, params = [0.0 : f32, 0.0 : f32]>
 >
 
 module attributes {} {
