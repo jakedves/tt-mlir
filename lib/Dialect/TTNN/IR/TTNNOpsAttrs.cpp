@@ -582,9 +582,10 @@ bool CoreRangeAttr::intersects(const CoreRangeAttr &other) const {
   }
 
   // Check each pair of core ranges for intersections
-  for (const auto * outerIt = coreRanges.begin(); outerIt != coreRanges.end() - 1;
-       outerIt++) {
-    for (const auto *innerIt = outerIt + 1; innerIt != coreRanges.end(); innerIt++) {
+  for (const auto *outerIt = coreRanges.begin();
+       outerIt != coreRanges.end() - 1; outerIt++) {
+    for (const auto *innerIt = outerIt + 1; innerIt != coreRanges.end();
+         innerIt++) {
       const CoreRangeAttr &firstCoreRange = *outerIt;
       const CoreRangeAttr &secondCoreRange = *innerIt;
       if (firstCoreRange.intersects(secondCoreRange)) {
