@@ -4,6 +4,7 @@
 
 import os
 import inspect
+import subprocess
 import torch
 from typing import Callable, List, Optional, Tuple
 
@@ -19,7 +20,6 @@ from ttmlir.passes import (
 )
 
 from .ttir_builder import Golden, Operand, Shape, TTIRBuilder, DataType
-from ttrt.common.api import API as ttrt
 
 TT_MLIR_HOME = os.environ.get("TT_MLIR_HOME", "")
 
@@ -317,10 +317,16 @@ def ttmetal_to_flatbuffer(
 def ttrt_run_fb( binary_path: str):
     """ Runs a flatbuffer at `binary_path` through `ttrt`. Should be equivalent to `ttrt run {binary_path}`
     """
-    ttrt.initialize_apis()
-    args = {"binary": binary_path}
-    result_code, results = ttrt.Run(args=args)()
-    assert result_code == 0
+    print(f"running {binary_path}")
+    result_code = subprocess.run(f"ttrt run {binary_path}", shell=True, capture_output=True)
+    result_code = result_code.returncode
+
+    if result_code == 42:
+        assert False, "PCC failure"
+    elif result_code == 1:
+        assert False, "Test run failure"
+    else:
+        assert result_code == 0
 
 
 def compile_to_flatbuffer(
