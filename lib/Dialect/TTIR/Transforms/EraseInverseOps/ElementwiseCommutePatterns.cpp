@@ -79,7 +79,7 @@ public:
     // the case, and we'll need to insert user clones on the
     // user edges that do not have an inverse on them.
     for (auto *user : users) {
-      assert(succeeded(checkIdenticalTms(tmUser, user)) &&
+      assert(checkIdenticalTms(tmUser, user) &&
              "shouldCommute should have ensured this is true");
       rewriter.replaceOp(user, newEltwise);
     }
@@ -106,8 +106,7 @@ private:
     // If all users of an elementwise unary op are identical tms, then it is
     // always favorable to commute them above it.
     SmallVector<Operation *> users(op->getUsers());
-    return success(users.size() > 0 &&
-                   succeeded(checkAllUsersAreIdenticalTms(users)));
+    return success(users.size() > 0 && checkAllUsersAreIdenticalTms(users));
   }
 };
 } // namespace
@@ -141,7 +140,7 @@ private:
     // be able to erase/consteval one or both of the commuted operand TMs.
     SmallVector<Operation *> users(op->getUsers());
     return success(firstOperandType == secondOperandType && users.size() > 0 &&
-                   succeeded(checkAllUsersAreIdenticalTms(users)));
+                   checkAllUsersAreIdenticalTms(users));
   }
 };
 } // namespace

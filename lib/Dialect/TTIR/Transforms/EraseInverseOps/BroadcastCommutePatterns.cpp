@@ -57,6 +57,7 @@
 #include "mlir/Dialect/Tensor/IR/Tensor.h"
 #include "ttmlir/Utils.h"
 #include <llvm/ADT/SmallVector.h>
+#include <llvm/Support/LogicalResult.h>
 #include <mlir/IR/BuiltinTypes.h>
 
 namespace mlir::tt::ttir {
@@ -174,7 +175,7 @@ public:
         newBroadcastDimensions);
 
     for (auto *user : op->getUsers()) {
-      assert(succeeded(checkIdenticalTms(transposeUser, user)) &&
+      assert(checkIdenticalTms(transposeUser, user) &&
              "shouldCommute should have ensured this is true");
       rewriter.replaceOp(user, newBroadcast);
     }
@@ -191,11 +192,10 @@ private:
                                    ttir::TransposeOp) const override {
     // We should always commute a transpose above a broadcast if it is the only
     // user of the broadcast. For now this is the only case we will handle.
-    // canCommute will have already confirmed that this user is a
+    // isCommuteViable will have already confirmed that this user is a
     // transpose and it can be commuted above the broadcast.
     SmallVector<Operation *> users(op->getUsers());
-    return success(users.size() > 0 &&
-                   succeeded(checkAllUsersAreIdenticalTms(users)));
+    return success(users.size() > 0 && checkAllUsersAreIdenticalTms(users));
   }
 };
 } // namespace
@@ -220,7 +220,7 @@ public:
                                        finalShape);
 
     assert(finalStrides.has_value() &&
-           "canCommute should have ensured that this is possible.");
+           "isCommuteViable should have ensured that this is possible.");
 
     // All dimensions with stride 0 will be broadcasted. So the new reshape
     // should have the same shape as the desired output - except with all
@@ -256,7 +256,7 @@ public:
         newBroadcastDimensions);
 
     for (auto *user : op->getUsers()) {
-      assert(succeeded(checkIdenticalTms(reshapeUser, user)) &&
+      assert(checkIdenticalTms(reshapeUser, user) &&
              "shouldCommute should have ensured this is true");
       rewriter.replaceOp(user, newBroadcast);
     }
@@ -308,11 +308,10 @@ private:
                                    ttir::ReshapeOp) const override {
     // We should always commute a reshape above a broadcast if it is the only
     // user of the broadcast. For now we only handle this case.
-    // canCommute will have already confirmed that this user is a
+    // isCommuteViable will have already confirmed that this user is a
     // reshape and it can be commuted above the broadcast.
     SmallVector<Operation *> users(op->getUsers());
-    return success(users.size() > 0 &&
-                   succeeded(checkAllUsersAreIdenticalTms(users)));
+    return success(users.size() > 0 && checkAllUsersAreIdenticalTms(users));
   }
 };
 } // namespace
@@ -351,7 +350,7 @@ public:
         newBroadcastDimensions);
 
     for (auto *user : op->getUsers()) {
-      assert(succeeded(checkIdenticalTms(permuteUser, user)) &&
+      assert(checkIdenticalTms(permuteUser, user) &&
              "shouldCommute should have ensured this is true");
       rewriter.replaceOp(user, newBroadcast);
     }
@@ -368,11 +367,10 @@ private:
                                    ttir::PermuteOp) const override {
     // We should always commute a permute above a broadcast if it is the only
     // user of the broadcast. For now this is the only case we will handle.
-    // canCommute will have already confirmed that this user is a
+    // isCommuteViable will have already confirmed that this user is a
     // permute and it can be commuted above the broadcast.
     SmallVector<Operation *> users(op->getUsers());
-    return success(users.size() > 0 &&
-                   succeeded(checkAllUsersAreIdenticalTms(users)));
+    return success(users.size() > 0 && checkAllUsersAreIdenticalTms(users));
   }
 };
 } // namespace
