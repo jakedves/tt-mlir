@@ -24,37 +24,45 @@ class TTNN_Attr<string name, string attrMnemonic, list<Trait> traits = [],
 }
 
 def TTNN_CoreCoordAttr : TTNN_Attr<"CoreCoord", "core_coord"> {
-  let summary = "TTNN CoreCoord attribute";
+  let summary = "A 2D coordinate of a core in the core grid";
   let description = [{
-    TTNN CoreCoord attribute
+    Specifies a coordinate representing a specific core
+    in the core grid. The `x` and `y` parameters define the coordinates of the core.
   }];
 
-  let parameters = (ins "size_t":$x, "size_t":$y);
+  let parameters = (ins "uint64_t":$x, "uint64_t":$y);
   let assemblyFormat = "`<` params `>`";
 }
 
 def TTNN_CoreRangeAttr: TTNN_Attr<"CoreRange", "core_range"> {
-  let summary = "TTNN CoreRange attribute";
+  let summary = "A range of cores in the core grid";
   let description = [{
-    TTNN CoreRange attribute
+    Defines a range of cores in the core grid.
+    The `start_coord` specifies the lower-left corner of the range,
+    while the `end_coord` parameter specifies the upper-right corner.
+    The condition `start_coord` <= `end_coord` must be satisfied.
   }];
 
   let parameters = (ins "CoreCoordAttr":$start_coord, "CoreCoordAttr":$end_coord);
   let assemblyFormat = "`<` qualified($start_coord) `,` qualified($end_coord) `>`";
+
   let extraClassDeclaration = [{
     bool intersects(const CoreRangeAttr& other) const;
   }];
+
   let genVerifyDecl = 1;
 }
 
 def TTNN_CoreRangeSetAttr: TTNN_Attr<"CoreRangeSet", "core_range_set"> {
-  let summary = "TTNN CoreRangeSet attribute";
+  let summary = "Represents a set of core ranges in the core grid";
   let description = [{
-    TTNN CoreRangeSet attribute
+    Defines a collection of core ranges within the core grid.
+    No two core ranges in the set should intersect.
   }];
 
   let parameters = (ins OptionalArrayRefParameter<"CoreRangeAttr">:$core_ranges);
   let assemblyFormat = "`<` (`[` qualified($core_ranges)^ `]`)? `>`";
+
   let genVerifyDecl = 1;
 }
 
@@ -113,9 +121,11 @@ def TTNN_MemoryConfigAttr : TTNN_Attr<"MemoryConfig", "memory_config"> {
 }
 
 def UnaryWithParamAttr : TTNN_Attr<"UnaryWithParam", "unary_with_param"> {
-  let summary = "TTNN UnaryWithParam";
+  let summary = "A unary operation with parameters for fused activations";
   let description = [{
-    TTNN UnaryWithParam
+    Defines a unary operation with additional parameters, used
+    for fused activations. The `op_type` specifies the type of unary
+    operation, while `params` provides the required parameters.
   }];
 
   let parameters = (ins "UnaryOpType":$op_type,
@@ -131,11 +141,11 @@ def TTNN_MatmulMultiCoreReuseProgramConfigAttr : TTNN_Attr<"MatmulMultiCoreReuse
   }];
 
   let parameters = (ins "CoreCoordAttr":$compute_with_storage_grid_size,
-                        "size_t":$in0_block_w,
-                        "size_t":$out_subblock_h,
-                        "size_t":$out_subblock_w,
-                        "size_t":$per_core_m,
-                        "size_t":$per_core_n);
+                        "uint64_t":$in0_block_w,
+                        "uint64_t":$out_subblock_h,
+                        "uint64_t":$out_subblock_w,
+                        "uint64_t":$per_core_m,
+                        "uint64_t":$per_core_n);
 
   let assemblyFormat = "`<` `compute_with_storage_grid_size` `=` qualified($compute_with_storage_grid_size) `,` struct($in0_block_w, $out_subblock_h, $out_subblock_w, $per_core_m, $per_core_n) `>`";
 }
@@ -147,13 +157,13 @@ def TTNN_MatmulMultiCoreReuseMultiCastProgramConfigAttr : TTNN_Attr<"MatmulMulti
   }];
 
   let parameters = (ins "CoreCoordAttr":$compute_with_storage_grid_size,
-                        "size_t":$in0_block_w,
-                        "size_t":$out_subblock_h,
-                        "size_t":$out_subblock_w,
-                        "size_t":$out_block_h,
-                        "size_t":$out_block_w,
-                        "size_t":$per_core_m,
-                        "size_t":$per_core_n,
+                        "uint64_t":$in0_block_w,
+                        "uint64_t":$out_subblock_h,
+                        "uint64_t":$out_subblock_w,
+                        "uint64_t":$out_block_h,
+                        "uint64_t":$out_block_w,
+                        "uint64_t":$per_core_m,
+                        "uint64_t":$per_core_n,
                         "bool":$transpose_mcast,
                         OptionalParameter<"UnaryWithParamAttr">:$fused_activation,
                         "bool":$fuse_batch);
@@ -173,19 +183,19 @@ def TTNN_MatmulMultiCoreReuseMultiCast1DProgramConfigAttr : TTNN_Attr<"MatmulMul
   }];
 
   let parameters = (ins "CoreCoordAttr":$compute_with_storage_grid_size,
-                        "size_t":$in0_block_w,
-                        "size_t":$out_subblock_h,
-                        "size_t":$out_subblock_w,
-                        "size_t":$out_block_h,
-                        "size_t":$out_block_w,
-                        "size_t":$per_core_m,
-                        "size_t":$per_core_n,
+                        "uint64_t":$in0_block_w,
+                        "uint64_t":$out_subblock_h,
+                        "uint64_t":$out_subblock_w,
+                        "uint64_t":$out_block_h,
+                        "uint64_t":$out_block_w,
+                        "uint64_t":$per_core_m,
+                        "uint64_t":$per_core_n,
                         "bool":$fuse_batch,
                         OptionalParameter<"UnaryWithParamAttr">:$fused_activation,
                         "bool":$mcast_in0,
                         "bool":$gather_in0,
                         "CoreRangeSetAttr":$hop_cores,
-                        "size_t":$num_global_cb_receivers);
+                        "uint64_t":$num_global_cb_receivers);
 
   let assemblyFormat = [{`<`
     `compute_with_storage_grid_size` `=` qualified($compute_with_storage_grid_size) `,`
@@ -204,9 +214,9 @@ def TTNN_MatmulMultiCoreReuseMultiCastDRAMShardedProgramConfigAttr : TTNN_Attr<"
     TTNN MatmulMultiCoreReuseMultiCastDRAMShardedProgramConfig
   }];
 
-  let parameters = (ins "size_t":$in0_block_w,
-                        "size_t":$per_core_m,
-                        "size_t":$per_core_n,
+  let parameters = (ins "uint64_t":$in0_block_w,
+                        "uint64_t":$per_core_m,
+                        "uint64_t":$per_core_n,
                         OptionalParameter<"UnaryWithParamAttr">:$fused_activation);
 
   let assemblyFormat = [{`<`
