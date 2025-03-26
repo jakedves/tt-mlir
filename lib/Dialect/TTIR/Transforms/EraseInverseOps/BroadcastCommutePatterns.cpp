@@ -64,7 +64,7 @@ namespace mlir::tt::ttir {
 
 static SmallVector<int64_t> getContiguousStrides(ArrayRef<int64_t> shape) {
   SmallVector<int64_t> strides(shape.size(), 1);
-  for (int64_t i = shape.size() - 2; i >= 0; i--) {
+  for (int64_t i = static_cast<int64_t>(shape.size()) - 2; i >= 0; i--) {
     strides[i] = shape[i + 1] * strides[i + 1];
   }
   return strides;
@@ -140,10 +140,10 @@ getStrideAfterBroadcastReshape(ArrayRef<int64_t> originalShape,
 
 namespace {
 class TTIRCommuteTransposesAboveBroadcast
-    : public TTIRCommuteRewritePattern<ttir::TransposeOp, ttir::BroadcastOp> {
+    : public TTIRCommuteOpRewritePattern<ttir::TransposeOp, ttir::BroadcastOp> {
 public:
-  using TTIRCommuteRewritePattern<ttir::TransposeOp,
-                                  ttir::BroadcastOp>::TTIRCommuteRewritePattern;
+  using TTIRCommuteOpRewritePattern<
+      ttir::TransposeOp, ttir::BroadcastOp>::TTIRCommuteOpRewritePattern;
 
   void performCommuteRewrite(ttir::BroadcastOp op,
                              ttir::TransposeOp transposeUser,
@@ -203,10 +203,10 @@ private:
 namespace {
 
 class TTIRCommuteReshapeAboveBroadcast
-    : public TTIRCommuteRewritePattern<ttir::ReshapeOp, ttir::BroadcastOp> {
+    : public TTIRCommuteOpRewritePattern<ttir::ReshapeOp, ttir::BroadcastOp> {
 public:
-  using TTIRCommuteRewritePattern<ttir::ReshapeOp,
-                                  ttir::BroadcastOp>::TTIRCommuteRewritePattern;
+  using TTIRCommuteOpRewritePattern<
+      ttir::ReshapeOp, ttir::BroadcastOp>::TTIRCommuteOpRewritePattern;
   void performCommuteRewrite(ttir::BroadcastOp op, ttir::ReshapeOp reshapeUser,
                              PatternRewriter &rewriter) const override {
 
@@ -318,10 +318,10 @@ private:
 
 namespace {
 class TTIRCommutePermuteAboveBroadcast
-    : public TTIRCommuteRewritePattern<ttir::PermuteOp, ttir::BroadcastOp> {
+    : public TTIRCommuteOpRewritePattern<ttir::PermuteOp, ttir::BroadcastOp> {
 public:
-  using TTIRCommuteRewritePattern<ttir::PermuteOp,
-                                  ttir::BroadcastOp>::TTIRCommuteRewritePattern;
+  using TTIRCommuteOpRewritePattern<
+      ttir::PermuteOp, ttir::BroadcastOp>::TTIRCommuteOpRewritePattern;
 
   void performCommuteRewrite(ttir::BroadcastOp op, ttir::PermuteOp permuteUser,
                              PatternRewriter &rewriter) const override {
